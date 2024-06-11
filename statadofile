@@ -1,0 +1,152 @@
+* Recreate Table 1
+clear 
+use "/Users/haivanle/Downloads/Coding_Exercise/Data.dta"
+** The paper explained that they initially had 303 children taking part in the social preference experiments then one was dropped
+** but table one was showing results of 301 children. I was unable to get the exact number since I checked that the data I was given has 302 data points.
+count if in_experiment == 1
+
+table treat in_experiment, statistic(mean age_at_test female black hispanic white time_hours2) statistic (semean age_at_test female black hispanic white time_hours2)
+// iebaltab age_at_test female black hispanic white time_hours2, grpvar(treat) savetex("/Users/haivanle/Downloads/Coding_Exercise/balance_table.tex")
+***Average age in years
+
+mean age_at_test if treat == "Control"
+mean age_at_test if treat == "PA"
+mean age_at_test if treat == "PK"
+mean age_at_test
+***Share of girls
+
+proportion female if in_experiment == 1 & treat == "Control"
+proportion female if in_experiment == 1 & treat == "PA"
+proportion female if in_experiment == 1 & treat == "PK"
+proportion female if in_experiment == 1
+***Share of Black
+
+proportion black if in_experiment == 1 & treat == "Control"
+proportion black if in_experiment == 1 & treat == "PA"
+proportion black if in_experiment == 1 & treat == "PK"
+proportion black if in_experiment == 1
+
+***Share of Hispanic
+
+proportion hispanic if in_experiment == 1 & treat == "Control"
+proportion hispanic if in_experiment == 1 & treat == "PA"
+proportion hispanic if in_experiment == 1 & treat == "PK"
+proportion hispanic if in_experiment == 1
+
+***Share of White
+
+proportion white if in_experiment == 1 & treat == "Control"
+proportion white if in_experiment == 1 & treat == "PA"
+proportion white if in_experiment == 1 & treat == "PK"
+proportion white if in_experiment == 1
+
+***Average time of experiment
+
+mean time_hours2 if in_experiment == 1 & treat == "Control"
+mean time_hours2 if in_experiment == 1 & treat == "PA"
+mean time_hours2 if in_experiment == 1 & treat == "PK"
+mean time_hours2 if in_experiment == 1
+
+* Recreate Table 3
+collect clear
+collect create MyModels
+***Columns 1 and 2 - Dictator
+
+collect _r_b _r_se,                    ///
+        name(MyModels)                 ///
+        tag(model[(1)]): reg inequalitydictator any_PK any_PA // reg (1)
+
+collect p_d1=r(p1), tag(model[(1)]): test any_PK = any_PA 
+collect p_d2=r(p2), tag(model[(1)]): test any_PK = any_PA = 0
+
+collect _r_b _r_se,                    ///
+        name(MyModels)                 ///
+        tag(model[(2)]): reg inequalitydictator any_PK any_PA age_at_test female black hispanic // reg (2)
+collect layout (colname#result) (model), name(MyModels)
+
+collect p_d1=r(p1), tag(model[(2)]): test any_PK = any_PA 
+collect p_d2=r(p2), tag(model[(2)]): test any_PK = any_PA = 0
+
+***Columns 3 and 4 - Efficiency 
+
+collect _r_b _r_se,                    ///
+        name(MyModels)                 ///
+        tag(model[(3)]): reg inequalityefficiency any_PK any_PA
+
+collect p_d1=r(p1), tag(model[(3)]): test any_PK = any_PA 
+collect p_d2=r(p2), tag(model[(3)]): test any_PK = any_PA = 0
+
+collect _r_b _r_se,                    ///
+        name(MyModels)                 ///
+        tag(model[(4)]): reg inequalityefficiency any_PK any_PA age_at_test female black hispanic
+
+collect p_d1=r(p1), tag(model[(4)]): test any_PK = any_PA 
+collect p_d2=r(p2), tag(model[(4)]): test any_PK = any_PA = 0
+
+***Columns 5 and 6 - Luck 
+
+collect _r_b _r_se,                    ///
+        name(MyModels)                 ///
+        tag(model[(5)]): reg inequalitylucky any_PK any_PA
+		
+collect p_d1=r(p1), tag(model[(5)]): test any_PK = any_PA 
+collect p_d2=r(p2), tag(model[(5)]): test any_PK = any_PA = 0		
+
+		
+collect _r_b _r_se,                    ///
+        name(MyModels)                 ///
+        tag(model[(6)]): reg inequalitylucky any_PK any_PA age_at_test female black hispanic
+
+collect p_d1=r(p1), tag(model[(6)]): test any_PK = any_PA 
+collect p_d2=r(p2), tag(model[(6)]): test any_PK = any_PA = 0
+
+***Columns 7 and 8 - Merit 
+
+collect _r_b _r_se,                    ///
+        name(MyModels)                 ///
+        tag(model[(7)]): reg inequalitymerit any_PK any_PA
+
+collect p_d1=r(p1), tag(model[(7)]): test any_PK = any_PA 
+collect p_d2=r(p2), tag(model[(7)]): test any_PK = any_PA = 0
+
+collect _r_b _r_se,                    ///
+        name(MyModels)                 ///
+        tag(model[(8)]): reg inequalitymerit any_PK any_PA age_at_test female black hispanic
+
+collect p_d1=r(p1), tag(model[(8)]): test any_PK = any_PA 
+collect p_d2=r(p2), tag(model[(8)]): test any_PK = any_PA = 0
+
+***Columns 9 and 10 - Merit and Luck  
+
+collect _r_b _r_se,                    ///
+        name(MyModels)                 ///
+        tag(model[(9)]): reg inequalitymeritlucky any_PK any_PA
+
+collect p_d1=r(p1), tag(model[(9)]): test any_PK = any_PA 
+collect p_d2=r(p2), tag(model[(9)]): test any_PK = any_PA = 0
+
+collect _r_b _r_se,                    ///
+        name(MyModels)                 ///
+        tag(model[(10)]): reg inequalitymeritlucky any_PK any_PA age_at_test female black hispanic
+
+collect p_d1=r(p1), name(MyModels)  tag(model[(10)]): test any_PK = any_PA 
+collect p_d2=r(p2), name(MyModels)  tag(model[(10)]): test any_PK = any_PA = 0
+
+collect style showbase off
+collect style cell, nformat(%5.2f)
+collect style cell border_block, border(right, pattern(nil))
+collect style cell result[_r_se], sformat("(%s)")
+collect levelsof cell_type
+collect style cell cell_type[item column-header], halign(center)
+collect style header result, level(hide)
+collect style column, extraspace(1)
+collect style row stack, spacer delimiter(" x ")
+
+collect style header result[r2 p_d1 p_d2], level(label)
+collect label levels result p_d1 "p-value (PS = PA)" p_d2 "p-value (PS = PA = 0)" r2 "R-squared", modify
+collect style cell result[p_d1 p_d2], nformat(%5.3f) 
+
+collect preview
+** My apology, I was unable to get the p-values shown in the output
+collect layout (colname#result result[r2 p_d1 p_d2]) (model), name(MyModels)
+
